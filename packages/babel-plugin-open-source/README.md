@@ -3,8 +3,6 @@
   <br><br>
   <b>Alt + Click on rendered JSX to source in VSCode</b>
   <br><br>
-  <img src="https://img.shields.io/badge/status-experimental-de9214?style=flat"/>
-  <br><br>
 </p>
 
 &nbsp;
