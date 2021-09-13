@@ -8,14 +8,23 @@ module.exports = declare(api => {
 
   const visitor = {
     Program: {
-      exit: ({ node }) => {
+      enter: (_, state) => {
+        state.file.set('hasJSX', false);
+      },
+      exit: (path, state) => {
+        // only add import statement to files that have JSX
+
+        // bonus TODO: would be nice if we only add this once for each entry point
+        // but we don't have that information here
+        if (!state.file.get('hasJSX')) return;
+
         const declaration = t.importDeclaration(
           [],
           t.stringLiteral(scriptLocation)
         );
 
-        node.body.unshift(declaration);
-      }
+        path.node.body.unshift(declaration);
+      },
     },
     JSXOpeningElement(path, state) {
       if (process.env.NODE_ENV !== 'development') return
@@ -24,6 +33,8 @@ module.exports = declare(api => {
 
       // the element was generated and doesn't have location information
       if (!location) return
+
+      state.file.set('hasJSX', true);
 
       const sourceData = JSON.stringify({
         filename: state.filename,
@@ -42,7 +53,6 @@ module.exports = declare(api => {
 
   return {
     name: 'babel-plugin-open-source',
-    visitor
+    visitor,
   }
 })
-
