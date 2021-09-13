@@ -1,4 +1,6 @@
 <p align="center">
+  <img src="https://github.com/siddharthkp/babel-plugin-open-source/blob/main/demo.gif?raw=true" height="500"/>
+  <br><br>
   <b>Alt + Click on rendered JSX to source in VSCode</b>
   <br><br>
   <img src="https://img.shields.io/badge/status-experimental-de9214?style=flat"/>

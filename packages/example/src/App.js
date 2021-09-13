@@ -9,9 +9,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <Hello />
-        <p>
-          Hold Alt and click to open in VSCode
-        </p>
+        <p>Hold Alt and click to open in VSCode</p>
       </header>
     </div >
   );
