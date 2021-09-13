@@ -1,15 +1,13 @@
 {
   "name": "babel-plugin-open-source",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Alt + Click on rendered JSX to source in VSCode",
   "main": "babel.js",
   "keywords": [],
   "author": "siddharthkp",
   "license": "MIT",
   "dependencies": {
-    "@babel/helper-plugin-utils": "^7.14.5"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.15.5"
+    "@babel/core": ">7.0.0",
+    "@babel/helper-plugin-utils": ">7.0.0"
   }
 }
