@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://github.com/siddharthkp/babel-plugin-open-source/blob/main/demo.gif?raw=true" height="500"/>
   <br><br>
-  <b>Alt + Click on rendered JSX to source in VSCode</b>
+  <b>Alt + Click on rendered JSX to open it's source code in VSCode</b>
   <br><br>
 </p>
 
