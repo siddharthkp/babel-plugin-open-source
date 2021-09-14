@@ -28,7 +28,7 @@ Add the plugin to your babel config.
 }
 ```
 
- Example: [Nextjs](https://nextjs.org/docs/advanced-features/customizing-babel-config) | [create react app](https://github.com/timarney/react-app-rewired)
+ Docs for changing babel config: [Nextjs](https://nextjs.org/docs/advanced-features/customizing-babel-config) | [create react app](https://github.com/timarney/react-app-rewired)
 
 &nbsp;
 
