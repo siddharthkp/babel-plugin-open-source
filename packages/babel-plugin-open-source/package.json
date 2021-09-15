@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-open-source",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Alt + Click on rendered JSX to source in VSCode",
   "main": "babel.js",
   "keywords": [],
