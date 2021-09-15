@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://github.com/siddharthkp/babel-plugin-open-source/blob/main/demo.gif?raw=true" height="500"/>
+  <img src="https://github.com/siddharthkp/babel-plugin-open-source/blob/main/demo.gif?raw=true" />
   <br><br>
-  <b>Alt + Click on rendered JSX to source in VSCode</b>
+  <b>Alt + Click on rendered JSX to open it's source code in VSCode</b>
   <br><br>
 </p>
 
@@ -28,7 +28,7 @@ Add the plugin to your babel config.
 }
 ```
 
- Example: [Nextjs](https://nextjs.org/docs/advanced-features/customizing-babel-config) | [create react app](https://github.com/timarney/react-app-rewired)
+ Docs for changing babel config: [Nextjs](https://nextjs.org/docs/advanced-features/customizing-babel-config) | [create react app](https://github.com/timarney/react-app-rewired)
 
 &nbsp;
 
