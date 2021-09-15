@@ -3,6 +3,7 @@ if (typeof document !== 'undefined') {
     if (!event.target.dataset.source) return;
     if (!event.altKey) return;
 
+    event.preventDefault();
     const { filename, start } = JSON.parse(event.target.dataset.source)
     window.open('vscode://file' + filename + ':' + start)
   })
