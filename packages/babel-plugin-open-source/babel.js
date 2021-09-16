@@ -36,6 +36,8 @@ module.exports = declare(api => {
 
       state.file.set('hasJSX', true);
 
+      if (path.container.openingElement.name.name === 'Fragment') return
+
       const sourceData = JSON.stringify({
         filename: state.filename,
         start: location.start.line,
