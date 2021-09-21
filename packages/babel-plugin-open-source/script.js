@@ -5,6 +5,6 @@ if (typeof document !== 'undefined') {
 
     event.preventDefault();
     const { filename, start } = JSON.parse(event.target.dataset.source)
-    window.open('vscode://file' + filename + ':' + start)
+    window.open('vscode://file/' + filename + ':' + start)
   })
 }
