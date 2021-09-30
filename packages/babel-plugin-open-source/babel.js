@@ -44,12 +44,38 @@ module.exports = declare(api => {
         end: location.end.line
       })
 
-      path.container.openingElement.attributes.push(
-        t.jsxAttribute(
-          t.jsxIdentifier('data-source'),
+      if (state.opts.reactNativeWeb) {
+        const dataSetAttr = path.container.openingElement.attributes.find(
+          (attr) => {
+            return attr.name && attr.name.name === "dataSet";
+          }
+        );
+        const dataSetProperty = t.objectProperty(
+          t.identifier("source"),
           t.stringLiteral(sourceData)
+        );
+
+        if (dataSetAttr && t.isJSXExpressionContainer(dataSetAttr.value)) {
+          // dataSet={{x: a}}
+          if (t.isObjectExpression(dataSetAttr.value.expression)) {
+            dataSetAttr.value.expression.properties.push(dataSetProperty);
+          }
+          // dataSet={x}
+          else if (t.isIdentifier(dataSetAttr.value.expression)) {
+            dataSetAttr.value.expression = t.objectExpression([
+              t.spreadElement(dataSetAttr.value.expression),
+              dataSetProperty,
+            ]);
+          }
+        }
+      } else {
+        path.container.openingElement.attributes.push(
+          t.jsxAttribute(
+            t.jsxIdentifier('data-source'),
+            t.stringLiteral(sourceData)
+          )
         )
-      )
+      }
     }
   }
 
