@@ -67,6 +67,13 @@ module.exports = declare(api => {
               dataSetProperty,
             ]);
           }
+        } else {
+          path.container.openingElement.attributes.push(
+            t.jsxAttribute(
+              t.jsxIdentifier('dataSet'),
+              t.jsxExpressionContainer(t.objectExpression([dataSetProperty]))
+            )
+          );
         }
       } else {
         path.container.openingElement.attributes.push(
