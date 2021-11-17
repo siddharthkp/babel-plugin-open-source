@@ -4,7 +4,7 @@ if (typeof document !== 'undefined') {
     if (!event.altKey) return;
 
     event.preventDefault();
-    const { filename, start, editor } = JSON.parse(event.target.dataset.source)
-    window.open(editor + '://file/' + filename + ':' + start)
+    const { filename, start, url } = JSON.parse(event.target.dataset.source)
+    window.open(url)
   })
 }

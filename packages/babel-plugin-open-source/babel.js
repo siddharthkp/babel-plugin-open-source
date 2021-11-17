@@ -33,26 +33,46 @@ module.exports = declare(api => {
       if (process.env.NODE_ENV !== 'development') return
 
       const location = path.container.openingElement.loc
-      let editorURLProtocol = "vscode"
+      let url = null;
+      let editor = state.opts?.editor?.toLowerCase() || 'vscode';
 
       // the element was generated and doesn't have location information
       if (!location) return
 
       try {
         if(state.opts.envPath) {
-          editorURLProtocol = dotenv.parse(fs.readFileSync(filePath.resolve(process.cwd(),state.opts.envPath), 'utf8'))?.BABEL_OPEN_SOURCE_EDITOR;
+          editor = dotenv.parse(fs.readFileSync(filePath.resolve(process.cwd(),state.opts.envPath), 'utf8'))?.BABEL_OPEN_SOURCE_EDITOR;
         }
-      }  catch (error) {}
+      }  catch (error) {
+        console.error("ERROR in Babel Plugin Open Source", error)
+      }
 
       state.file.set('hasJSX', true);
 
       if (path.container.openingElement.name.name === 'Fragment') return
 
+      if(editor === 'sublime') {
+        // https://macromates.com/blog/2007/the-textmate-url-scheme/
+        // https://github.com/ljubadr/sublime-protocol-win
+        url = `subl://open?url=file://${state.filename}&line=${location.start.line}`
+      } else if (editor === 'phpstorm'){
+        // https://github.com/siddharthkp/babel-plugin-open-source/issues/6#issue-999132767
+        url = `phpstorm://open?file=${state.filename}&line=${location.start.line}`
+      } else if (editor === 'atom') {
+        // https://flight-manual.atom.io/hacking-atom/sections/handling-uris/#core-uris
+        url = `atom://core/open/file?filename=${state.filename}&line=${location.start.line}`
+      } else if (editor === 'vscode-insiders') {
+        url = `vscode-insiders://file/${state.filename}:${location.start.line}`
+      } else {
+        url = `vscode://file/${state.filename}:${location.start.line}`
+      }
+
+
       const sourceData = JSON.stringify({
         filename: state.filename,
         start: location.start.line,
         end: location.end.line,
-        editor: state.opts.editorURLProtocol || editorURLProtocol,
+        url: url,
       })
 
       path.container.openingElement.attributes.push(
