@@ -24,21 +24,12 @@ Add the plugin to your babel config.
 {
    "plugins": [
       "babel-plugin-open-source",
-      "editor:"vscode", // vscode-insiders | sublime | atom
+      "editor:"vscode", // optional, default: "vscode". options: vscode | vscode-insiders | sublime | atom | phpstorm
     ]
 }
 ```
 
-Currently Supported editors are:
-- VSCode
-- VSCode-Insiders
-- Sublime
-- Atom
-- Phpstorm
-
-Personalized editors
-- You can also specify the supported editors in your `.env` with the key `BABEL_OPEN_SOURCE_EDITOR`.
-- `BABEL_OPEN_SOURCE_EDITOR` value would override the `editor` option passed in the plugin.
+If folks in your team use different editors, you can customise the editor just for you by adding the key `BABEL_OPEN_SOURCE_EDITOR` in your `.env` file.
 
 ---
 
