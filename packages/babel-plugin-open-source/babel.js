@@ -1,8 +1,6 @@
 const { declare } = require('@babel/helper-plugin-utils')
 const { types: t } = require('@babel/core')
-const fs = require('fs');
 const dotenv = require('dotenv')
-const filePath = require('path')
 
 const scriptLocation = 'babel-plugin-open-source/script.js'
 
@@ -39,17 +37,15 @@ module.exports = declare(api => {
       // the element was generated and doesn't have location information
       if (!location) return
 
-      try {
-        if(state.opts.envPath) {
-          editor = dotenv.parse(fs.readFileSync(filePath.resolve(process.cwd(),state.opts.envPath), 'utf8'))?.BABEL_OPEN_SOURCE_EDITOR;
-        }
-      }  catch (error) {
-        console.error("ERROR in Babel Plugin Open Source", error)
-      }
-
       state.file.set('hasJSX', true);
 
       if (path.container.openingElement.name.name === 'Fragment') return
+
+      // picks root directory's .env file
+      const editorInENV = dotenv.config()?.parsed?.["BABEL_OPEN_SOURCE_EDITOR"];
+      if(editorInENV) {
+        editor = editorInENV;
+      }
 
       if(editor === 'sublime') {
         // https://macromates.com/blog/2007/the-textmate-url-scheme/
@@ -69,10 +65,7 @@ module.exports = declare(api => {
 
 
       const sourceData = JSON.stringify({
-        filename: state.filename,
-        start: location.start.line,
-        end: location.end.line,
-        url: url,
+        url
       })
 
       path.container.openingElement.attributes.push(
