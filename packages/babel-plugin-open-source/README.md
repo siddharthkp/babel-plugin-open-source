@@ -29,7 +29,7 @@ Add the plugin to your babel config.
 }
 ```
 
-Current Supoorted editors are:
+Currently Supported editors are:
 - VSCode
 - VSCode-Insiders
 - Sublime
