@@ -23,10 +23,24 @@ Add the plugin to your babel config.
 // .babelrc
 {
    "plugins": [
-      "babel-plugin-open-source"
+      "babel-plugin-open-source",
+      "editor:"vscode", // vscode-insiders | sublime | atom
     ]
 }
 ```
+
+Current Supoorted editors are:
+- VSCode
+- VSCode-Insiders
+- Sublime
+- Atom
+- Phpstorm
+
+Personalized editors
+- You can also specify the supported editors in your `.env` with the key `BABEL_OPEN_SOURCE_EDITOR`.
+- `BABEL_OPEN_SOURCE_EDITOR` value would override the `editor` option passed in the plugin.
+
+---
 
  Docs for changing babel config: [Nextjs](https://nextjs.org/docs/advanced-features/customizing-babel-config) | [create react app](https://github.com/timarney/react-app-rewired)
 
