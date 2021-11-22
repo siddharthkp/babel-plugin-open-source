@@ -36,7 +36,18 @@ module.exports = declare(api => {
 
       state.file.set('hasJSX', true);
 
-      if (path.container.openingElement.name.name === 'Fragment') return
+      const nameNode = path.container.openingElement.name
+      if (nameNode.name === 'Fragment') return
+      // use like: <React.Fragment>{...}</React.Fragment>
+      if (
+        nameNode.type === 'JSXMemberExpression' &&
+        nameNode.object &&
+        nameNode.object.name === 'React' &&
+        nameNode.property &&
+        nameNode.property.name === 'Fragment'
+      ) {
+        return
+      }
 
       const sourceData = JSON.stringify({
         filename: state.filename,
