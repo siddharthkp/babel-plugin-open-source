@@ -23,10 +23,15 @@ Add the plugin to your babel config.
 // .babelrc
 {
    "plugins": [
-      "babel-plugin-open-source"
+      "babel-plugin-open-source",
+      "editor:"vscode", // optional, default: "vscode". options: vscode | vscode-insiders | sublime | atom | phpstorm
     ]
 }
 ```
+
+If folks in your team use different editors, you can customise the editor just for you by adding the key `BABEL_OPEN_SOURCE_EDITOR` in your `.env` file.
+
+---
 
  Docs for changing babel config: [Nextjs](https://nextjs.org/docs/advanced-features/customizing-babel-config) | [create react app](https://github.com/timarney/react-app-rewired)
 

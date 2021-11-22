@@ -4,7 +4,7 @@ if (typeof document !== 'undefined') {
     if (!event.altKey) return;
 
     event.preventDefault();
-    const { filename, start } = JSON.parse(event.target.dataset.source)
-    window.open('vscode://file/' + filename + ':' + start)
+    const { url } = JSON.parse(event.target.dataset.source)
+    window.open(url)
   })
 }

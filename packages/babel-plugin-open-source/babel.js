@@ -1,5 +1,6 @@
 const { declare } = require('@babel/helper-plugin-utils')
 const { types: t } = require('@babel/core')
+const dotenv = require('dotenv')
 
 const scriptLocation = 'babel-plugin-open-source/script.js'
 
@@ -30,6 +31,8 @@ module.exports = declare(api => {
       if (process.env.NODE_ENV !== 'development') return
 
       const location = path.container.openingElement.loc
+      let url = null;
+      let editor = state.opts?.editor?.toLowerCase() || 'vscode';
 
       // the element was generated and doesn't have location information
       if (!location) return
@@ -49,10 +52,31 @@ module.exports = declare(api => {
         return
       }
 
+      // picks root directory's .env file
+      const editorInENV = dotenv.config()?.parsed?.["BABEL_OPEN_SOURCE_EDITOR"];
+      if(editorInENV) {
+        editor = editorInENV;
+      }
+
+      if(editor === 'sublime') {
+        // https://macromates.com/blog/2007/the-textmate-url-scheme/
+        // https://github.com/ljubadr/sublime-protocol-win
+        url = `subl://open?url=file://${state.filename}&line=${location.start.line}`
+      } else if (editor === 'phpstorm'){
+        // https://github.com/siddharthkp/babel-plugin-open-source/issues/6#issue-999132767
+        url = `phpstorm://open?file=${state.filename}&line=${location.start.line}`
+      } else if (editor === 'atom') {
+        // https://flight-manual.atom.io/hacking-atom/sections/handling-uris/#core-uris
+        url = `atom://core/open/file?filename=${state.filename}&line=${location.start.line}`
+      } else if (editor === 'vscode-insiders') {
+        url = `vscode-insiders://file/${state.filename}:${location.start.line}`
+      } else {
+        url = `vscode://file/${state.filename}:${location.start.line}`
+      }
+
+
       const sourceData = JSON.stringify({
-        filename: state.filename,
-        start: location.start.line,
-        end: location.end.line
+        url
       })
 
       path.container.openingElement.attributes.push(
