@@ -4,6 +4,19 @@ const dotenv = require('dotenv')
 
 const scriptLocation = 'babel-plugin-open-source/script.js'
 
+// simple get. use dot to get attr value.
+function get(object, path) {
+  path = path ? path.split('.') : []
+
+  let index = 0
+  const length = path.length
+
+  while (object != null && index < length) {
+    object = object[path[index++]]
+  }
+  return (index && index == length) ? object : undefined
+}
+
 module.exports = declare(api => {
   api.assertVersion(7)
 
@@ -32,7 +45,7 @@ module.exports = declare(api => {
 
       const location = path.container.openingElement.loc
       let url = null;
-      let editor = state.opts?.editor?.toLowerCase() || 'vscode';
+      let editor = (get(state, 'opts.editor') || 'vscode').toLowerCase();
 
       // the element was generated and doesn't have location information
       if (!location) return
@@ -53,7 +66,7 @@ module.exports = declare(api => {
       }
 
       // picks root directory's .env file
-      const editorInENV = dotenv.config()?.parsed?.["BABEL_OPEN_SOURCE_EDITOR"];
+      const editorInENV = get(dotenv.config(), 'parsed.BABEL_OPEN_SOURCE_EDITOR');
       if(editorInENV) {
         editor = editorInENV;
       }
