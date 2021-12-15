@@ -32,7 +32,7 @@ module.exports = declare(api => {
 
       const location = path.container.openingElement.loc
       let url = null;
-      let editor = state.opts?.editor?.toLowerCase() || 'vscode';
+      let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode'
 
       // the element was generated and doesn't have location information
       if (!location) return
@@ -53,7 +53,8 @@ module.exports = declare(api => {
       }
 
       // picks root directory's .env file
-      const editorInENV = dotenv.config()?.parsed?.["BABEL_OPEN_SOURCE_EDITOR"];
+      const dotenvConfig = dotenv.config()
+      const editorInENV= dotenvConfig && dotenvConfig.parsed && dotenvConfig.parsed.BABEL_OPEN_SOURCE_EDITOR;
       if(editorInENV) {
         editor = editorInENV;
       }
