@@ -28,11 +28,11 @@ module.exports = declare((api) => {
       }
     },
     JSXOpeningElement(path, state) {
-      if (process.env.NODE_ENV !== 'development') return;
-
       const location = path.container.openingElement.loc;
       let url = null;
       let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode';
+
+      if (editor !== 'github' && process.env.NODE_ENV !== 'development') return;
 
       // the element was generated and doesn't have location information
       if (!location) return;
