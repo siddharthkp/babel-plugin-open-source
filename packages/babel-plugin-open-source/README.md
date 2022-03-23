@@ -24,7 +24,7 @@ Add the plugin to your babel config.
 {
    "plugins": [
       "babel-plugin-open-source",
-      "editor:"vscode", // optional, default: "vscode". options: vscode | vscode-insiders | sublime | atom | phpstorm
+      { editor:"vscode" } // optional, default: "vscode". options: vscode | vscode-insiders | sublime | atom | phpstorm
     ]
 }
 ```
