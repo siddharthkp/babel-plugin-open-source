@@ -1,11 +1,11 @@
-const { declare } = require('@babel/helper-plugin-utils')
-const { types: t } = require('@babel/core')
-const dotenv = require('dotenv')
+const { declare } = require('@babel/helper-plugin-utils');
+const { types: t } = require('@babel/core');
+const dotenv = require('dotenv');
 
-const scriptLocation = 'babel-plugin-open-source/script.js'
+const scriptLocation = 'babel-plugin-open-source/script.js';
 
-module.exports = declare(api => {
-  api.assertVersion(7)
+module.exports = declare((api) => {
+  api.assertVersion(7);
 
   const visitor = {
     Program: {
@@ -19,28 +19,25 @@ module.exports = declare(api => {
         // but we don't have that information here
         if (!state.file.get('hasJSX')) return;
 
-        const declaration = t.importDeclaration(
-          [],
-          t.stringLiteral(scriptLocation)
-        );
+        const declaration = t.importDeclaration([], t.stringLiteral(scriptLocation));
 
         path.node.body.unshift(declaration);
-      },
+      }
     },
     JSXOpeningElement(path, state) {
-      if (process.env.NODE_ENV !== 'development') return
+      if (process.env.NODE_ENV !== 'development') return;
 
-      const location = path.container.openingElement.loc
+      const location = path.container.openingElement.loc;
       let url = null;
-      let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode'
+      let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode';
 
       // the element was generated and doesn't have location information
-      if (!location) return
+      if (!location) return;
 
       state.file.set('hasJSX', true);
 
-      const nameNode = path.container.openingElement.name
-      if (nameNode.name === 'Fragment') return
+      const nameNode = path.container.openingElement.name;
+      if (nameNode.name === 'Fragment') return;
       // use like: <React.Fragment>{...}</React.Fragment>
       if (
         nameNode.type === 'JSXMemberExpression' &&
@@ -49,48 +46,58 @@ module.exports = declare(api => {
         nameNode.property &&
         nameNode.property.name === 'Fragment'
       ) {
-        return
+        return;
       }
 
       // picks root directory's .env file
-      const dotenvConfig = dotenv.config()
-      const editorInENV= dotenvConfig && dotenvConfig.parsed && dotenvConfig.parsed.BABEL_OPEN_SOURCE_EDITOR;
-      if(editorInENV) {
+      const dotenvConfig = dotenv.config();
+      const editorInENV = dotenvConfig && dotenvConfig.parsed && dotenvConfig.parsed.BABEL_OPEN_SOURCE_EDITOR;
+      if (editorInENV) {
         editor = editorInENV;
       }
 
-      if(editor === 'sublime') {
+      if (editor === 'sublime') {
         // https://macromates.com/blog/2007/the-textmate-url-scheme/
         // https://github.com/ljubadr/sublime-protocol-win
-        url = `subl://open?url=file://${state.filename}&line=${location.start.line}`
-      } else if (editor === 'phpstorm'){
+        url = `subl://open?url=file://${state.filename}&line=${location.start.line}`;
+      } else if (editor === 'phpstorm') {
         // https://github.com/siddharthkp/babel-plugin-open-source/issues/6#issue-999132767
-        url = `phpstorm://open?file=${state.filename}&line=${location.start.line}`
+        url = `phpstorm://open?file=${state.filename}&line=${location.start.line}`;
       } else if (editor === 'atom') {
         // https://flight-manual.atom.io/hacking-atom/sections/handling-uris/#core-uris
-        url = `atom://core/open/file?filename=${state.filename}&line=${location.start.line}`
+        url = `atom://core/open/file?filename=${state.filename}&line=${location.start.line}`;
       } else if (editor === 'vscode-insiders') {
-        url = `vscode-insiders://file/${state.filename}:${location.start.line}`
+        url = `vscode-insiders://file/${state.filename}:${location.start.line}`;
+      } else if (editor === 'github') {
+        const gitconfig = require('gitconfiglocal');
+        const findGitRoot = require('find-git-root');
+
+        gitconfig('./', function (err, config) {
+          if (err) {
+            console.log('could not parse remote origin');
+            return;
+          }
+          const repo = config.remote.origin.url.replace('git@github.com:', '').replace('.git', '');
+          const gitRoot = findGitRoot(state.filename).replace('.git', '');
+          const filePath = state.filename.replace(gitRoot, '');
+          const branchName = process.env.GITHUB_HEAD_REF || 'main';
+
+          url = `https://github.com/${repo}/blob/${branchName}/${filePath}`;
+        });
       } else {
-        url = `vscode://file/${state.filename}:${location.start.line}`
+        url = `vscode://file/${state.filename}:${location.start.line}`;
       }
 
-
-      const sourceData = JSON.stringify({
-        url
-      })
+      const sourceData = JSON.stringify({ url });
 
       path.container.openingElement.attributes.push(
-        t.jsxAttribute(
-          t.jsxIdentifier('data-source'),
-          t.stringLiteral(sourceData)
-        )
-      )
+        t.jsxAttribute(t.jsxIdentifier('data-source'), t.stringLiteral(sourceData))
+      );
     }
-  }
+  };
 
   return {
     name: 'babel-plugin-open-source',
-    visitor,
-  }
-})
+    visitor
+  };
+});
