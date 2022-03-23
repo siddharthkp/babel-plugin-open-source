@@ -1,3 +1,6 @@
+const fs = require('fs');
+const ini = require('ini');
+const path = require('path');
 const { declare } = require('@babel/helper-plugin-utils');
 const { types: t } = require('@babel/core');
 const dotenv = require('dotenv');
@@ -69,25 +72,10 @@ module.exports = declare((api) => {
       } else if (editor === 'vscode-insiders') {
         url = `vscode-insiders://file/${state.filename}:${location.start.line}`;
       } else if (editor === 'github') {
-        const gitconfig = require('gitconfiglocal');
-        const findGitRoot = require('find-git-root');
-
-        gitconfig('./', function (err, config) {
-          if (err) {
-            console.log('could not parse remote origin');
-            return;
-          }
-          const repo = config.remote.origin.url.replace('git@github.com:', '').replace('.git', '');
-          const gitRoot = findGitRoot(state.filename).replace('.git', '');
-          const filePath = state.filename.replace(gitRoot, '');
-          const branchName = process.env.GITHUB_HEAD_REF || 'main';
-
-          url = `https://github.com/${repo}/blob/${branchName}/${filePath}`;
-        });
+        url = getGitHubUrl(state.filename, location.start.line);
       } else {
         url = `vscode://file/${state.filename}:${location.start.line}`;
       }
-
       const sourceData = JSON.stringify({ url });
 
       path.container.openingElement.attributes.push(
@@ -101,3 +89,37 @@ module.exports = declare((api) => {
     visitor
   };
 });
+
+const getGitHubUrl = (localFilePath, lineNumber) => {
+  const findGitRoot = require('find-git-root');
+
+  const repo = getRepositoryPath();
+  const gitRoot = findGitRoot(localFilePath).replace('.git', '');
+  const filePath = localFilePath.replace(gitRoot, '');
+  const branchName = process.env.GITHUB_HEAD_REF || 'main';
+
+  return `https://github.com/${repo}/blob/${branchName}/${filePath}#L${lineNumber}`;
+};
+
+function findGit() {
+  var directory = path.resolve('./', '.git', 'config');
+  const exists = fs.existsSync(directory);
+  if (exists) return directory;
+
+  if ('./' === path.resolve('./', '..')) return false;
+  findGit();
+}
+
+const getRepositoryPath = () => {
+  const gitPath = findGit();
+
+  if (!gitPath) {
+    console.log('Could not find .git');
+    return;
+  }
+
+  const result = fs.readFileSync(gitPath, 'utf8');
+  const config = ini.parse(result);
+
+  return config['remote "origin"'].url.replace('git@github.com:', '').replace('.git', '');
+};

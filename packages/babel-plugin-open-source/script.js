@@ -30,7 +30,7 @@ if (typeof document !== 'undefined') {
   });
 
   document.addEventListener('mouseover', (event) => {
-    if (modifier) event.target.setAttribute('data-hovering', 'true');
+    if (modifier && event.target.dataset.source) event.target.setAttribute('data-hovering', 'true');
   });
   document.addEventListener('mouseout', (event) => {
     if (modifier) event.target.removeAttribute('data-hovering');
