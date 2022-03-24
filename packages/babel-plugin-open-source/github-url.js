@@ -1,6 +1,5 @@
 const fs = require('fs');
 const ini = require('ini');
-const findGitRoot = require('find-git-root');
 
 const getGitHubUrl = (localFilePath, lineNumber) => {
   if (process.env.VERCEL) {
@@ -16,6 +15,7 @@ const getGitHubUrl = (localFilePath, lineNumber) => {
     return `https://github.com/${repo}/blob/${branchName}/${filePath}#L${lineNumber}`;
   } else {
     try {
+      const findGitRoot = require('find-git-root');
       const gitRoot = findGitRoot(localFilePath).replace('.git', '');
       const repo = getRepository(gitRoot);
       const filePath = localFilePath.replace(gitRoot, '');
