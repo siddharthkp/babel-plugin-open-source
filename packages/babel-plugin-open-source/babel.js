@@ -75,7 +75,7 @@ module.exports = declare((api) => {
       } else if (editor === 'vscode-insiders') {
         url = `vscode-insiders://file/${state.filename}:${location.start.line}`;
       } else if (editor === 'github') {
-        const getGitHubUrl = require('./github-url');
+        const getGitHubUrl = require('./github-url.js');
         url = getGitHubUrl(state.filename, location.start.line);
       } else {
         url = `vscode://file/${state.filename}:${location.start.line}`;

@@ -37,4 +37,4 @@ const getRepository = (gitRoot) => {
   return config['remote "origin"'].url.replace('git@github.com:', '').replace('.git', '');
 };
 
-module.export = getGitHubUrl;
+module.exports = getGitHubUrl;
