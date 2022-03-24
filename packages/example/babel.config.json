@@ -1,4 +1,4 @@
 {
   "presets": ["next/babel"],
-  "plugins": ["babel-plugin-open-source"]
+  "plugins": [["babel-plugin-open-source", { "editor": "github" }]]
 }

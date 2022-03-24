@@ -1,11 +1,12 @@
-const fs = require('fs');
-const ini = require('ini');
-const path = require('path');
 const { declare } = require('@babel/helper-plugin-utils');
 const { types: t } = require('@babel/core');
 const dotenv = require('dotenv');
+const getGitHubUrl = require('./github-url.js');
 
 const scriptLocation = 'babel-plugin-open-source/script.js';
+
+// picks root directory's .env file
+const dotenvConfig = dotenv.config();
 
 module.exports = declare((api) => {
   api.assertVersion(7);
@@ -14,6 +15,15 @@ module.exports = declare((api) => {
     Program: {
       enter: (_, state) => {
         state.file.set('hasJSX', false);
+
+        let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode';
+        const editorInENV = dotenvConfig && dotenvConfig.parsed && dotenvConfig.parsed.BABEL_OPEN_SOURCE_EDITOR;
+        if (editorInENV) editor = editorInENV;
+
+        state.file.set('editor', editor);
+
+        if (process.env.NODE_ENV === 'development' || editor === 'github');
+        else state.file.set('skip', true);
       },
       exit: (path, state) => {
         // only add import statement to files that have JSX
@@ -28,11 +38,10 @@ module.exports = declare((api) => {
       }
     },
     JSXOpeningElement(path, state) {
+      if (state.file.get('skip')) return;
+
       const location = path.container.openingElement.loc;
       let url = null;
-      let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode';
-
-      if (editor !== 'github' && process.env.NODE_ENV !== 'development') return;
 
       // the element was generated and doesn't have location information
       if (!location) return;
@@ -52,12 +61,7 @@ module.exports = declare((api) => {
         return;
       }
 
-      // picks root directory's .env file
-      const dotenvConfig = dotenv.config();
-      const editorInENV = dotenvConfig && dotenvConfig.parsed && dotenvConfig.parsed.BABEL_OPEN_SOURCE_EDITOR;
-      if (editorInENV) {
-        editor = editorInENV;
-      }
+      const editor = state.file.get('editor');
 
       if (editor === 'sublime') {
         // https://macromates.com/blog/2007/the-textmate-url-scheme/
@@ -89,37 +93,3 @@ module.exports = declare((api) => {
     visitor
   };
 });
-
-const getGitHubUrl = (localFilePath, lineNumber) => {
-  const findGitRoot = require('find-git-root');
-
-  const repo = getRepositoryPath();
-  const gitRoot = findGitRoot(localFilePath).replace('.git', '');
-  const filePath = localFilePath.replace(gitRoot, '');
-  const branchName = process.env.GITHUB_HEAD_REF || 'main';
-
-  return `https://github.com/${repo}/blob/${branchName}/${filePath}#L${lineNumber}`;
-};
-
-function findGit() {
-  var directory = path.resolve('./', '.git', 'config');
-  const exists = fs.existsSync(directory);
-  if (exists) return directory;
-
-  if ('./' === path.resolve('./', '..')) return false;
-  findGit();
-}
-
-const getRepositoryPath = () => {
-  const gitPath = findGit();
-
-  if (!gitPath) {
-    console.log('Could not find .git');
-    return;
-  }
-
-  const result = fs.readFileSync(gitPath, 'utf8');
-  const config = ini.parse(result);
-
-  return config['remote "origin"'].url.replace('git@github.com:', '').replace('.git', '');
-};
