@@ -97,24 +97,30 @@ module.exports = declare((api) => {
 
 const getGitHubUrl = (localFilePath, lineNumber) => {
   if (process.env.VERCEL) {
+    // TODO: I bet I'll regret hardcoding this
+    const gitRoot = '/vercel/path0/';
+
     const repo = process.env.VERCEL_GIT_REPO_OWNER + '/' + process.env.VERCEL_GIT_REPO_SLUG;
-    console.log(localFilePath);
-    console.log(process.cwd());
-  }
-
-  const findGitRoot = require('find-git-root');
-
-  try {
-    gitRoot = findGitRoot(localFilePath).replace('.git', '');
-    const repo = getRepository(gitRoot);
     const filePath = localFilePath.replace(gitRoot, '');
 
     // TODO: replace with ci-env
-    const branchName = process.env.GITHUB_HEAD_REF || process.env.VERCEL_GIT_COMMIT_REF || 'main';
+    const branchName = process.env.VERCEL_GIT_COMMIT_REF || 'main';
 
     return `https://github.com/${repo}/blob/${branchName}/${filePath}#L${lineNumber}`;
-  } catch (error) {
-    console.log('Could not find .git root, skipping plugin');
+  } else {
+    try {
+      const findGitRoot = require('find-git-root');
+      const gitRoot = findGitRoot(localFilePath).replace('.git', '');
+      const repo = getRepository(gitRoot);
+      const filePath = localFilePath.replace(gitRoot, '');
+
+      // TODO: replace with ci-env
+      const branchName = process.env.GITHUB_HEAD_REF || 'main';
+
+      return `https://github.com/${repo}/blob/${branchName}/${filePath}#L${lineNumber}`;
+    } catch (error) {
+      console.log('Could not find .git root, skipping plugin');
+    }
   }
 };
 
