@@ -12,7 +12,7 @@
     "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "babel-plugin-open-source": "1.1.1",
+    "babel-plugin-open-source": "1.2.4",
     "dotenv": "^16.0.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
