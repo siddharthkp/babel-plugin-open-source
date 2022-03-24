@@ -4,8 +4,6 @@ const { declare } = require('@babel/helper-plugin-utils');
 const { types: t } = require('@babel/core');
 const dotenv = require('dotenv');
 
-console.log(fs.readdirSync('./'));
-
 const scriptLocation = 'babel-plugin-open-source/script.js';
 
 // picks root directory's .env file
@@ -98,6 +96,12 @@ module.exports = declare((api) => {
 });
 
 const getGitHubUrl = (localFilePath, lineNumber) => {
+  if (process.env.VERCEL) {
+    const repo = process.env.VERCEL_GIT_REPO_OWNER + '/' + process.env.VERCEL_GIT_REPO_SLUG;
+    console.log(localFilePath);
+    console.log(process.cwd());
+  }
+
   const findGitRoot = require('find-git-root');
 
   try {
