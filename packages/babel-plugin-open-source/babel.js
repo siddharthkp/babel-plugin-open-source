@@ -1,9 +1,10 @@
 const fs = require('fs');
 const ini = require('ini');
-const path = require('path');
 const { declare } = require('@babel/helper-plugin-utils');
 const { types: t } = require('@babel/core');
 const dotenv = require('dotenv');
+
+console.log(fs.readdirSync('./'));
 
 const scriptLocation = 'babel-plugin-open-source/script.js';
 
