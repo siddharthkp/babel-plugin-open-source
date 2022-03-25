@@ -3,11 +3,15 @@ const ini = require('ini');
 
 const getGitHubUrl = (localFilePath, lineNumber) => {
   if (process.env.VERCEL) {
-    // TODO: I bet I'll regret hardcoding this
-    const gitRoot = '/vercel/path0/';
-
     const repo = process.env.VERCEL_GIT_REPO_OWNER + '/' + process.env.VERCEL_GIT_REPO_SLUG;
-    const filePath = localFilePath.replace(gitRoot, '');
+
+    // TODO: I bet I'll regret hardcoding this
+    const filePath = localFilePath
+      .replace('/vercel/path0/', '')
+      .replace('/vercel/path1/', '')
+      .replace('/vercel/path2/', '')
+      .replace('/vercel/path3/', '')
+      .replace('/vercel/path4/', '');
 
     // TODO: replace with ci-env
     const branchName = process.env.VERCEL_GIT_COMMIT_REF || 'main';
