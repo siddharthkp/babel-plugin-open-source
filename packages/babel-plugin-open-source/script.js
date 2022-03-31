@@ -43,6 +43,17 @@ if (typeof document !== 'undefined') {
     event.preventDefault();
     modifier = false;
     const { url } = JSON.parse(event.target.dataset.source);
-    window.open(url);
+
+    if (!url.includes('https://github.com')) window.open(url);
+    else {
+      // TODO: I bet I'll regret hardcoding this
+      const cleanUrl = url
+        .replace('/vercel/path0/', '')
+        .replace('/vercel/path1/', '')
+        .replace('/vercel/path2/', '')
+        .replace('/vercel/path3/', '')
+        .replace('/vercel/path4/', '');
+      window.open(cleanUrl);
+    }
   });
 }
