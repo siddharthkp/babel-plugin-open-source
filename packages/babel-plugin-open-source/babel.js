@@ -16,7 +16,8 @@ module.exports = declare((api) => {
       enter: (_, state) => {
         state.file.set('hasJSX', false);
 
-        let editor = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode';
+        const editorInOpts = state.opts && state.opts.editor ? state.opts.editor.toLowerCase() : 'vscode'
+        let editor = process.env.NODE_ENV === 'production' ? 'github' : editorInOpts;
         const editorInENV = dotenvConfig && dotenvConfig.parsed && dotenvConfig.parsed.BABEL_OPEN_SOURCE_EDITOR;
         if (editorInENV) editor = editorInENV;
 
