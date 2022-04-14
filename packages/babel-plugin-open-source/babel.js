@@ -82,9 +82,10 @@ module.exports = declare((api) => {
         url = `vscode://file/${state.filename}:${location.start.line}`;
       }
       const sourceData = JSON.stringify({ url });
+      const sourceNode = t.jsxExpressionContainer(t.templateLiteral([t.templateElement({ raw: sourceData })], []))
 
       path.container.openingElement.attributes.push(
-        t.jsxAttribute(t.jsxIdentifier('data-source'), t.stringLiteral(sourceData))
+        t.jsxAttribute(t.jsxIdentifier('data-source'), sourceNode)
       );
     }
   };
