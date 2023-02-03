@@ -62,6 +62,13 @@ module.exports = declare((api) => {
         return;
       }
 
+      // don't add data-source if it already exists
+      const hasDataSource = path.container.openingElement.attributes.find(
+        (attr) => attr.name && attr.name.name === 'data-source'
+      );
+
+      if (hasDataSource) return;
+
       const editor = state.file.get('editor');
 
       if (editor === 'sublime') {
