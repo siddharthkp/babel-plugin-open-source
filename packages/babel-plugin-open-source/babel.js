@@ -3,8 +3,6 @@ const { types: t } = require('@babel/core');
 const dotenv = require('dotenv');
 const getEditorUrl = require('./editor-url.js');
 
-const scriptLocation = 'babel-plugin-open-source/script.js';
-
 // picks root directory's .env file
 const dotenvConfig = dotenv.config();
 
@@ -33,8 +31,8 @@ module.exports = declare((api) => {
         // but we don't have that information here
         if (!state.file.get('hasJSX')) return;
 
+        const scriptLocation = 'babel-plugin-open-source/script.js';
         const declaration = t.importDeclaration([], t.stringLiteral(scriptLocation));
-
         path.node.body.unshift(declaration);
       }
     },
